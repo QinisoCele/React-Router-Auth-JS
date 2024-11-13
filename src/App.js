@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { createContext, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Login from './Login';
+import ProtectedRoute from './ProtectedRoute';
 
-function App() {
+// Create a context to hold authentication data
+export const AuthContext = createContext();
+
+export default function App() {
+  const [userAuth, setUserAuth] = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthContext.Provider value={{ userAuth, setUserAuth }}>
+      <Router>
+          <Routes>
+              <Route path="/" element={<Login />}/>
+              <Route path="/login" element={<Login />}/>
+              <Route path='/home' element={<ProtectedRoute element={<Home/>}/>}/>
+              <Route path="/about" element={<ProtectedRoute element={<About/>}/>}/>
+              {/* <Route path="/logout" element={<ProtectedRoute element={<Login/>}/>}/> */}
+          </Routes>
+      </Router>
+    </AuthContext.Provider>
+
   );
 }
 
-export default App;
+function Home() {
+
+  return (
+    <nav>xs
+       <h2>Home</h2>;
+       <h3>Hello </h3>
+    <ul>
+      <li><Link to="/about">About</Link></li>
+      <li><Link to="/login">Logout</Link></li>
+    </ul>
+  </nav>
+ )
+}
+
+function About() {
+  return (
+    <nav>
+        <h2>About</h2>
+        <ul>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/login">Logout</Link></li>
+        </ul>
+    </nav>
+  )
+}
